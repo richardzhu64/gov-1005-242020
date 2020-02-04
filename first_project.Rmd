@@ -9,7 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(gov.1005.data)
-
+library(ggplot2)
+library(ggthemes)
 ```
 
 ```{r}
@@ -17,24 +18,13 @@ data("congress")
 summary(congress)
 oldest_congress <-
   congress %>% arrange(desc(age))
-oldest_congress[1, "age"]
+summary(oldest_congress)
+oldest_congressperson <- paste(oldest_congress[1, "firstname"],oldest_congress[1, "lastname"])
+
+graph_data <- congress %>% filter(party %in% c("D", "R")) %>% group_by(year, party) %>%   summarise(average_age = mean(age))
+                                  
+summary(graph_data)
+
+ggplot(graph_data, aes(year, average_age, color=party)) + geom_line()
 ```
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+The oldest Congressman is `r oldest_congressperson` who is `r oldest_congress[1, "age"]` in `r oldest_congress[1, "year"]` 
